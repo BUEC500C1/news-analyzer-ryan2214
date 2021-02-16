@@ -24,3 +24,4 @@ def test_delete_file_upload():
     fu.delete()
 
     assert os.path.isfile("test.json") == 0
+
