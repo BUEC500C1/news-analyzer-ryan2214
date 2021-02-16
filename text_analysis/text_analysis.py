@@ -3,5 +3,5 @@ import json
 
 def read_json(jsname):
     with open(jsname, "r", encoding='utf-8') as f:
-        data = json.loads(f) #data contains list of content
-    return data;
+    #    data = json.loads(f) #data contains list of content
+    return f;
