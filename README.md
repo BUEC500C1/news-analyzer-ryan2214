@@ -5,8 +5,8 @@ File upload, text analysis and Web search.
 
 # File Upload
 
-init: f = File_Uploader(jsname = "temp.json")
+init:  f = File_Uploader(jsname)
 
-upload txt: f.upload(filename)
+upload txt:  f.upload(filename)
 
-delete json: f.delete()
+delete json:  f.delete()
