@@ -19,6 +19,6 @@ def get_from_url(url):
 
 def store_list_to_json(res,jsname):
     with open(jsname, "a", encoding='utf-8') as j:
-        j.write(data)
+        j.write(json.dumps(res))
         print("json appended from list!")
         return 0
