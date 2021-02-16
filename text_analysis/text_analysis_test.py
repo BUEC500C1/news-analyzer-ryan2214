@@ -8,5 +8,6 @@ def test_read_json():
 
     fu = File_Uploader("ta_test.json")
     i = fu.upload("test.txt")
+    j = fu.upload("test.txt")
     data = read_json("ta_test.json")
     assert len(data) > 0
