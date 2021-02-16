@@ -5,6 +5,10 @@ File upload, text analysis and Web search.
 
 All the test cases are actually the best use cases.
 
+# Json
+
+{"filename": "a.txt", "data": "super\n"}
+
 # File Upload
 
 init:  f = File_Uploader(jsname)
