@@ -1,5 +1,6 @@
 # tianhel@bu.edu 2021
 import json
+import os
 
 class File_Uploader():
   def __init__(self, jsname = "temp.json"):
@@ -17,3 +18,6 @@ class File_Uploader():
     except IOError:
         print("File is not accessible.")
         return -1
+
+  def delete(self):
+  	os.remove(self.jsname)
