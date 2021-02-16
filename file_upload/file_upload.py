@@ -10,7 +10,7 @@ class File_Uploader():
         with open(filename, "r") as f:
             data = f.read()
 
-        with open(self.jsname, "w", encoding='utf-8') as j:
+        with open(self.jsname, "a", encoding='utf-8') as j:
             j.write(data)
             print("Upload complete!")
             return 0
