@@ -7,3 +7,7 @@ def test_success_file_upload():
 
     fu = File_Uploader("test.json");
     assert fu.upload("test.txt") == 0
+
+def test_fail_file_upload():
+    fu = File_Uploader("test.json");
+    assert fu.upload("test.txt") == -1
