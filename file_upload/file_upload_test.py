@@ -7,6 +7,3 @@ def test_success_file_upload():
 
     fu = File_Uploader("test.json");
     assert fu.upload("test.txt") == 0
-
-    with open("test.json", "r", encoding='utf-8') as f:
-        assert json.load(f) = "supercool"
