@@ -10,9 +10,10 @@ class File_Uploader():
     try:
         with open(filename, "r") as f:
             data = f.read()
+            content = {"filename":filename,"data":data}
 
         with open(self.jsname, "a", encoding='utf-8') as j:
-            j.write(data)
+            json.dump(content,j)
             print("Upload complete!")
             return 0
     except IOError:
