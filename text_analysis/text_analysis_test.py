@@ -1,5 +1,6 @@
 # tianhel@bu.edu 2021
 from file_upload import *
+from text_analysis import *
 
 def test_read_json():
     with open("test.txt","w") as f:
