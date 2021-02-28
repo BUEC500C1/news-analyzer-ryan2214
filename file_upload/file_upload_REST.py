@@ -13,26 +13,22 @@ api = Api(app)
 ##    'file3': {'file_name': 'super cool news!'},
 ##}
 
-FILES = {
-    'files/file1': {
-                      'file_name': 'cool news',
-                      'text':'a cool story.'
-    }
-}
+FILES = {}
 
 def refresh_files_with_local_json(root_dir):
-    FILES = {}
-
+    
     path = Path(root_dir)
-    all_json_file = list(path.glob('*.json'))
 
+    all_json_file = list(path.glob('**/*.json'))
+    
     for json_file in all_json_file:
-        file_name = json_file.parent.stem
+
         with json_file.open() as f:
             json_result = json.load(f)
+        file_name = str(json_file.stem)
+        FILES[file_name] = json_result
+        logging.debug('appending %s',file_name)
 
-        file_obj = {file_name:json_result}
-        FILES.append(file_obj)
 
 def write_result_in_file(write_path , write_content):
 
@@ -76,12 +72,17 @@ class FileList(Resource):
 
     def post(self):
         args = parser.parse_args()
+        file_js = {
+                      'file_name': args['file_name'],
+                      'text': args['text']
+                  }
+
         file_id = int(max(FILES.keys()).lstrip('files/file')) + 1
+        write_result_in_file('file%i.json' % file_id, file_js)
+
         file_id = 'files/file%i' % file_id
-        FILES[file_id] = {
-                              'file_name': args['file_name'],
-                              'text': args['text']
-                          }
+        FILES[file_id] = file_js
+
         return FILES[file_id], 201
 
 ##
@@ -89,9 +90,10 @@ class FileList(Resource):
 ##
 api.add_resource(FileList, '/files')
 api.add_resource(File, '/files/<file_id>')
-refresh_files_with_local_json(".")
+
 
 if __name__ == '__main__':
+    refresh_files_with_local_json('.')
     app.run(debug=True)
 ## host = 'XX.XX.XX.XX' ,port = 5000, debug = 'True'
 ## accroding to EC2 public IP
