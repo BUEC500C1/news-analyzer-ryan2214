@@ -66,7 +66,7 @@ class File(Resource):
                       'text': args['text']
                   }
         FILES[file_id] = file_js
-        return file_name, 201
+        return file_js, 201
 
 
 # FileList
