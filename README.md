@@ -19,6 +19,8 @@ delete json:  f.delete()
 
 flask ops:
 
+json file structure: {"file_name":"", "text":""}
+
 get file list: curl http://localhost:5000/files
 
 get a single file: curl http://localhost:5000/files/file2
