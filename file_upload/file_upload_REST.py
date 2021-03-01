@@ -3,6 +3,7 @@ from flask_restful import reqparse, abort, Api, Resource
 from pathlib import Path
 import json
 import logging
+import os
 
 app = Flask(__name__)
 api = Api(app)
@@ -27,14 +28,14 @@ def refresh_files_with_local_json(root_dir):
             json_result = json.load(f)
         file_name = str(json_file.stem)
         FILES[file_name] = json_result
-        logging.debug('appending %s',file_name)
+        #logging.debug('appending %s',file_name)
 
 
 def write_result_in_file(write_path , write_content):
 
     with open(write_path,'w') as f:
         json.dump(write_content,f)
-    logging.debug('writing file conpleted')
+    #logging.debug('writing file conpleted')
 
 
 def abort_if_file_doesnt_exist(file_id):
@@ -55,12 +56,16 @@ class File(Resource):
     def delete(self, file_id):
         abort_if_file_doesnt_exist(file_id)
         del FILES[file_id]
+        os.remove('%s.json'%file_id)
         return '', 204
 
     def put(self, file_id):
         args = parser.parse_args()
-        file_name = {'file_name': args['file_name']}
-        FILES[file_id] = file_name
+        file_js = {
+                      'file_name': args['file_name'],
+                      'text': args['text']
+                  }
+        FILES[file_id] = file_js
         return file_name, 201
 
 
@@ -77,10 +82,10 @@ class FileList(Resource):
                       'text': args['text']
                   }
 
-        file_id = int(max(FILES.keys()).lstrip('files/file')) + 1
+        file_id = int(max(FILES.keys()).lstrip('file')) + 1
         write_result_in_file('file%i.json' % file_id, file_js)
 
-        file_id = 'files/file%i' % file_id
+        file_id = 'file%i' % file_id
         FILES[file_id] = file_js
 
         return FILES[file_id], 201
