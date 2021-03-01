@@ -38,3 +38,7 @@ upload list to json:  store_list_to_json(res,jsname)
 # Text Analysis
 
 read from json file:  data = read_json(jsname)
+
+# Resources about Flask-RESTful
+
+https://flask-restful.readthedocs.io/en/latest/quickstart.html#full-example
