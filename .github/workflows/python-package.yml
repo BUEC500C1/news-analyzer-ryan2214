@@ -24,7 +24,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Create Google Credentials
-      run: base64 --decode ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}} >> cred.json
+      run: echo ${GOOGLE_APPLICATION_CREDENTIALS} | base64 --decode --ignore-garbage > $HOME/gcloud-service-key.json
+           echo 'export GOOGLE_APPLICATION_CREDENTIALS=$(cat $HOME/gcloud-service-key.json)' >> $BASH_ENV
     - name: Check Google Credentials
       run: cat cred.json
     - name: Install dependencies
@@ -44,7 +45,5 @@ jobs:
       run: |
         coverage run -m pytest
     - name: Show test coverage
-      env:
-          GOOGLE_APPLICATION_CREDENTIALS: cred.json
       run: |
         coverage report -m
