@@ -24,8 +24,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Create Google Credentials
-      run: base64 --decode --ignore-garbage ${GOOGLE_APPLICATION_CREDENTIALS} > $HOME/gcloud-service-key.json
-           export GOOGLE_APPLICATION_CREDENTIALS=$(cat $HOME/gcloud-service-key.json)
+      run: |
+        base64 --decode --ignore-garbage ${secrets.GOOGLE_APPLICATION_CREDENTIALS} > $HOME/gcloud-service-key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=$(cat $HOME/gcloud-service-key.json)
     - name: Check Google Credentials
       run: cat cred.json
     - name: Install dependencies
