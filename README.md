@@ -27,7 +27,7 @@ upload list to json:  store_list_to_json(res,jsname)
 
 # Text Analysis
 
-read from json file:  data = read_json(jsname)
+run NLP for all text uploaded
 
 # Resources about Flask-RESTful
 
