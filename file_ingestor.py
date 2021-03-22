@@ -213,9 +213,10 @@ def upload():
                       'content': content
                   }
             x = myfile.insert_one(file_js)
-
-            file_id = JSONEncoder().encode(x.inserted_id)
-            write_result_in_file(basepath+'/static/text/%s.json' % eval(file_id), file_js)
+            
+            file_id = eval(JSONEncoder().encode(x.inserted_id))
+            file_js["_id"] = file_id
+            write_result_in_file(basepath+'/static/text/%s.json' % file_id, file_js)
 
             return render_template('upload_text_ok.html',file_content = content)
  
