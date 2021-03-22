@@ -15,6 +15,7 @@ import time
 import pymongo
 import numpy as np
 from bson.objectid import ObjectId
+from bson import json_util
  
 from datetime import timedelta
  
@@ -67,17 +68,22 @@ def parse_dir(root_dir):
   path = Path(root_dir)
  
   all_json_file = list(path.glob('**/*.json'))
-  parse_result = []
+
   for json_file in all_json_file:
-    mydict = {}
+    mydict = {"_id":"0"}
 
     with json_file.open() as f:
       json_result = parse_json(f)
-    mydict["_id"]=json_result["_id"]
-    mydict["file_name"]=json_result["file_name"]
-    mydict["file_type"]=json_result["file_type"]
-    mydict["content"]=json_result["content"]
+    temp_json=json.loads(json_result[0])
+    mydict["_id"]=temp_json["_id"]
+    mydict["file_name"]=temp_json["file_name"]
+    mydict["file_type"]=temp_json["file_type"]
+    mydict["content"]=temp_json["content"]
 
+    myquery = {"_id": ObjectId(mydict["_id"]) }
+    mydoc = myfile.find(myquery)
+    if mydoc:
+        continue
     x = myfile.insert_one(mydict)
     #logging.debug('appending %s',file_name)
 
@@ -120,8 +126,9 @@ class File(Resource):
                       'content': args['content']
                   }
         x = myfile.insert_one(file_js)
-        file_id = JSONEncoder().encode(x.inserted_id)
-        write_result_in_file('%s.json' % eval(file_id), file_js)
+        file_id = eval(JSONEncoder().encode(x.inserted_id))
+        file_js["_id"] = file_id
+        write_result_in_file('%s.json' % file_id, file_js)
         return file_js, 201
 
 # FileList
@@ -142,8 +149,9 @@ class FileList(Resource):
                   }
         x = myfile.insert_one(file_js)
 
-        file_id = JSONEncoder().encode(x.inserted_id)
-        write_result_in_file('%s.json' % eval(file_id), file_js)
+        file_id = eval(JSONEncoder().encode(x.inserted_id))
+        file_js["_id"] = file_id
+        write_result_in_file('%s.json' % file_id, file_js)
 
         myquery = { "_id": ObjectId(file_id) }
         mydoc = myfile.find(myquery)
@@ -183,10 +191,11 @@ def upload():
                       'file_type': "pic",
                       'content': img_list
                   }
-            x = myfile.insert_one(file_js)
+            #x = myfile.insert_one(file_js)
 
-            file_id = JSONEncoder().encode(x.inserted_id)
-            write_result_in_file(basepath+'/static/images/%s.json' % eval(file_id), file_js)
+            #file_id = eval(JSONEncoder().encode(x.inserted_id))
+            #file_js["_id"] = file_id
+            #write_result_in_file(basepath+'/static/images/%s.json' % file_id, file_js)
     
             return render_template('upload_pic_ok.html',val1=time.time())
         
