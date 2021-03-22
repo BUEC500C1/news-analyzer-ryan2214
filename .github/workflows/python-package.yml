@@ -25,7 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Create Google Credentials
       run: |
-        base64 --decode ${secrets.GOOGLE_APPLICATION_CREDENTIALS} > gcloud-service-key.json
+        base64 --decode ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}} > gcloud-service-key.json
     - name: Check Google Credentials
       run: cat cred.json
     - name: Install dependencies
