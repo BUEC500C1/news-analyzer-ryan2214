@@ -25,8 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Create Google Credentials
       run: |
-        base64 --decode --ignore-garbage ${secrets.GOOGLE_APPLICATION_CREDENTIALS} > $HOME/gcloud-service-key.json
-        export GOOGLE_APPLICATION_CREDENTIALS=$(cat $HOME/gcloud-service-key.json)
+        base64 --decode ${secrets.GOOGLE_APPLICATION_CREDENTIALS} > gcloud-service-key.json
     - name: Check Google Credentials
       run: cat cred.json
     - name: Install dependencies
@@ -42,7 +41,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       env:
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcloud-service-key.json
+          GOOGLE_APPLICATION_CREDENTIALS: gcloud-service-key.json
       run: |
         coverage run -m pytest
     - name: Show test coverage
