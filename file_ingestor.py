@@ -5,6 +5,7 @@ from flask_restful import reqparse, abort, Api, Resource
 from werkzeug.utils import secure_filename
 from pathlib import Path
 from file_upload.pdf_parse import *
+from text_analysis.senti_analyze import *
 import json
 import logging
 import base64
@@ -169,6 +170,17 @@ def show():
     text_list = os.listdir(current_path+'/static/text')
     pic_list = os.listdir(current_path+'/static/images')
     return render_template('management.html')
+
+@app.route('/analyse', methods=['POST', 'GET'])  # add upload route
+def analyse():
+    current_path = os.path.abspath('.')
+    text_list = os.listdir(current_path+'/static/text')
+    nlp_result = ''
+    for file_name in text_list:
+        contents = Path(current_path+'/static/text/'+file_name).read_text()
+        nlp_result += file_name+'\t'
+        nlp_result += "{:.2f}".format(text_nlp(contents))+'\n'
+    return render_template('analyse.html',nlp=nlp_result)
 
 if __name__ == '__main__':
     # app.debug = True

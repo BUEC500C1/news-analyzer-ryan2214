@@ -44,7 +44,7 @@
             background-color:rgba(250,250,210,0.9);
             margin: auto;
             position: relative;
-            /*width: 900px;*/
+            width: 800px;
             font-family: Tahoma, Geneva, sans-serif;
             font-size: 20px;
             line-height: 24px;
@@ -55,7 +55,7 @@
             padding: 10px;
             border: 1px solid #999;
             border: inset 1px solid #333;
-            /*text-align: center;*/
+            text-align: center;
         }
        
       
@@ -65,13 +65,13 @@
 <body>
     <h1 style="color:white;">File Upload</h1>
     <form action="" enctype='multipart/form-data' method='POST'>
-        <a href="/upload">Back to Upload</a> 
+        <a href="/">Back to Upload</a> 
         <br>
         <h3>=====================================</h3>
-        <h3>File Content:</h3>
+        <h3>Analyse Result:</h3>
         <h3>=====================================</h3>
         <div >
-            <pre>{{file_content}}</pre>
+            <pre>{{nlp}}</pre>
         </div>
         
     </form>
