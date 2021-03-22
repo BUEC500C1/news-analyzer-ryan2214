@@ -4,43 +4,47 @@
     <meta charset="UTF-8">
     <style type="text/css">
         body{ 
-      background: url(static/background/jill.gif);
-      background-size:1920px 1080px;
-      background-position:center 0;
-      background-attachment:fixed;
-    }
+            background: url(static/background/jill.gif);
+            background-size:1920px 1080px;
+            background-position:center 0;
+            background-attachment:fixed;
+        }
 
-      h1{
-          font-family: "Courier New", Courier, monospace;
-          font-weight: bold;
-          font-stretch: extra-expanded;
-          text-align: center;
-          background-color: #4B0082;
-          color: white;
-      }
+        h1{
+            font-family: "Courier New", Courier, monospace;
+            font-weight: bold;
+            font-stretch: extra-expanded;
+            text-align: center;
+            background-color: #4B0082;
+            color: white;
+        }
 
-  h2{
-    position:absolute; 
-    bottom:0;
-    left:630px;
-    color: black;
-    font-size: 20px;
-  }
+        h2{
+            position:absolute; 
+            bottom:0;
+            left:630px;
+            color: black;
+            font-size: 20px;
+        }
 
-  h3{
-    font-family: "Courier New", Courier, monospace;
-    font-weight: bold;
-    font-stretch: extra-expanded;
-    text-align: center;
-    /*background-color: #4B0082;*/
-    color: black;
-  }
+        h3{
+            font-family: "Courier New", Courier, monospace;
+            font-weight: bold;
+            font-stretch: extra-expanded;
+            text-align: center;
+            /*background-color: #4B0082;*/
+            color: black;
+        }
+        pre{
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
 
-      form{
-          background-color:rgba(250,250,210,0.9);
+        form{
+            background-color:rgba(250,250,210,0.9);
             margin: auto;
             position: relative;
-            width: 600px;
+            /*width: 900px;*/
             font-family: Tahoma, Geneva, sans-serif;
             font-size: 20px;
             line-height: 24px;
@@ -51,11 +55,8 @@
             padding: 10px;
             border: 1px solid #999;
             border: inset 1px solid #333;
-            text-align: center;
-      }
-       .Back{
-           float:right;
-       }
+            /*text-align: center;*/
+        }
        
       
   </style>
@@ -64,12 +65,13 @@
 <body>
     <h1 style="color:white;">File Upload</h1>
     <form action="" enctype='multipart/form-data' method='POST'>
-        <a href="./">Back to Main</a>
-        =====================================
+        <a href="./upload">Back to Upload</a> 
+        <br>
+        <h3>=====================================</h3>
         <h3>File Content:</h3>
-        ===================================== 
-        <div display:flex>
-            <h3>{{file_content}}</h3>
+        <h3>=====================================</h3>
+        <div >
+            <pre>{{file_content}}</pre>
         </div>
         
     </form>
