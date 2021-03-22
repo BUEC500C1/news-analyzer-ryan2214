@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 # Imports the Google Cloud client library
 from google.cloud import language_v1
-from google.cloud import storage
 
 def text_nlp(text):
     # Instantiates a NLP client
