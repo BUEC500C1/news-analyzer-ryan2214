@@ -12,6 +12,9 @@ import base64
 import os
 import cv2
 import time
+import pymongo
+import numpy as np
+from bson.objectid import ObjectId
  
 from datetime import timedelta
  
@@ -24,7 +27,13 @@ def is_picture(filename):
 
 def is_text(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_TEXT_EXTENSIONS
- 
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o,ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self,o)
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -34,10 +43,15 @@ app.send_file_max_age_default = timedelta(seconds=1)
 
 
 ##FILES = {
-##    'file1': {'file_name': 'cool news'},
-##    'file2': {'file_name': '?????'},
-##    'file3': {'file_name': 'super cool news!'},
+##    "filename": "super news",
+##    "filetype": "pic" or "txt",
+##    "content": "a very nice day",
+##    "keyword": {"cool", "super"}
 ##}
+
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+mydb = myclient["filedb"]
+myfile = mydb["files"]
 
 FILES = {}
 
@@ -46,19 +60,26 @@ parser.add_argument('file_name')
 parser.add_argument('file_type')  # text, jpg
 parser.add_argument('text')
 
-def refresh_files_with_local_json(root_dir):
-    
-    path = Path(root_dir)
+def parse_json(data):
+    return json.loads(json_util.dumps(data))
 
-    all_json_file = list(path.glob('**/*.json'))
-    
-    for json_file in all_json_file:
+def parse_dir(root_dir):
+  path = Path(root_dir)
+ 
+  all_json_file = list(path.glob('**/*.json'))
+  parse_result = []
+  for json_file in all_json_file:
+    mydict = {}
 
-        with json_file.open() as f:
-            json_result = json.load(f)
-        file_name = str(json_file.stem)
-        FILES[file_name] = json_result
-        #logging.debug('appending %s',file_name)
+    with json_file.open() as f:
+      json_result = parse_json(f)
+    mydict["_id"]=json_result["_id"]
+    mydict["file_name"]=json_result["file_name"]
+    mydict["file_type"]=json_result["file_type"]
+    mydict["content"]=json_result["content"]
+
+    x = myfile.insert_one(mydict)
+    #logging.debug('appending %s',file_name)
 
 
 def write_result_in_file(write_path , write_content):
@@ -69,7 +90,10 @@ def write_result_in_file(write_path , write_content):
 
 
 def abort_if_file_doesnt_exist(file_id):
-    if file_id not in FILES:
+    myquery = {"_id": ObjectId(file_id) }
+    
+    mydoc = myfile.find(myquery)
+    if not mydoc:
         abort(404, message="File {} doesn't exist".format(file_id))
 
 # File
@@ -77,43 +101,53 @@ def abort_if_file_doesnt_exist(file_id):
 class File(Resource):
     def get(self, file_id):
         abort_if_file_doesnt_exist(file_id)
-        return FILES[file_id]
+        myquery = { "_id": ObjectId(file_id) }
+        mydoc = myfile.find(myquery)
+        return mydoc
 
     def delete(self, file_id):
         abort_if_file_doesnt_exist(file_id)
-        del FILES[file_id]
+        myquery = { "_id": ObjectId(file_id) }
+        myfile.delete_one(myquery)
         os.remove('%s.json'%file_id)
         return '', 204
 
-    def put(self, file_id):
+    def put(self):
         args = parser.parse_args()
         file_js = {
                       'file_name': args['file_name'],
-                      'text': args['text']
+                      'file_type': args['file_type'],
+                      'content': args['content']
                   }
-        FILES[file_id] = file_js
+        x = myfile.insert_one(file_js)
+        file_id = JSONEncoder().encode(x.inserted_id)
+        write_result_in_file('%s.json' % eval(file_id), file_js)
         return file_js, 201
 
 # FileList
 # shows a list of all FILES, and lets you POST to add new file_names
 class FileList(Resource):
     def get(self):
+        FILES = []
+        for x in myfile.find():
+            FILES.append(x)
         return FILES
 
     def post(self):
         args = parser.parse_args()
         file_js = {
                       'file_name': args['file_name'],
-                      'text': args['text']
+                      'file_type': args['file_type'],
+                      'content': args['content']
                   }
+        x = myfile.insert_one(file_js)
 
-        file_id = int(max(FILES.keys()).lstrip('file')) + 1
-        write_result_in_file('file%i.json' % file_id, file_js)
+        file_id = JSONEncoder().encode(x.inserted_id)
+        write_result_in_file('%s.json' % eval(file_id), file_js)
 
-        file_id = 'file%i' % file_id
-        FILES[file_id] = file_js
-
-        return FILES[file_id], 201
+        myquery = { "_id": ObjectId(file_id) }
+        mydoc = myfile.find(myquery)
+        return mydoc, 201
 
 ##
 ## Actually setup the Api resource routing here
@@ -143,6 +177,16 @@ def upload():
             # Opencv read picture
             img = cv2.imread(upload_path)
             cv2.imwrite(os.path.join(basepath, 'static/images', 'output.jpg'), img)
+            img_list = img.tolist()
+            file_js = {
+                      'file_name': f.filename.rsplit('.', 1)[0],
+                      'file_type': "pic",
+                      'content': img_list
+                  }
+            x = myfile.insert_one(file_js)
+
+            file_id = JSONEncoder().encode(x.inserted_id)
+            write_result_in_file(basepath+'/static/images/%s.json' % eval(file_id), file_js)
     
             return render_template('upload_pic_ok.html',val1=time.time())
         
@@ -151,16 +195,29 @@ def upload():
             basepath = os.path.dirname(__file__)  # current path
             upload_path = os.path.join(basepath, 'static/text', secure_filename(f.filename))  # make sure pwd exists
             f.save(upload_path)
+            content = ""
 
             if(f.filename.rsplit('.', 1)[1]=='pdf'): # process pdf
                 pdf_utils = PDFUtils()
                 content = pdf_utils.pdf2txt(upload_path)
-                print(f.filename)
                 ft = open(upload_path.rsplit('.', 1)[0]+".txt",'w')
                 ft.write(content)
                 ft.close()
                 os.remove(upload_path)
-                return render_template('upload_text_ok.html',file_content = content)
+            # now we have txt in static/text
+            with open(upload_path.rsplit('.', 1)[0]+".txt", "r") as f2:  # 打开文件
+                content = f2.read()
+            file_js = {
+                      'file_name': f.filename.rsplit('.', 1)[0],
+                      'file_type': "txt",
+                      'content': content
+                  }
+            x = myfile.insert_one(file_js)
+
+            file_id = JSONEncoder().encode(x.inserted_id)
+            write_result_in_file(basepath+'/static/text/%s.json' % eval(file_id), file_js)
+
+            return render_template('upload_text_ok.html',file_content = content)
  
     return render_template('upload.html')
 
@@ -184,5 +241,5 @@ def analyse():
 
 if __name__ == '__main__':
     # app.debug = True
-    refresh_files_with_local_json('.')
+    parse_dir('.')
     app.run(host='0.0.0.0', port=80, debug=True)
