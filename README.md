@@ -3,6 +3,10 @@ news-analyzer-ryan2214 created by GitHub Classroom
 
 File upload, text analysis and Web search.
 
+# Start MongoDB
+
+mongod.exe --dbpath E:\data\db
+
 # Level
 
 / : main page
