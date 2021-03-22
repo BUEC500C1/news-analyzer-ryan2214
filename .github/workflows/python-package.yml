@@ -26,7 +26,7 @@ jobs:
     - name: Create Google Credentials
       run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS.GOOGLE_APPLICATION_CREDENTIALS }}" | base64 --decode >> cred.json
     - name: Check Google Credentials
-      run: cat cred.json
+      run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS.GOOGLE_APPLICATION_CREDENTIALS }}"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
