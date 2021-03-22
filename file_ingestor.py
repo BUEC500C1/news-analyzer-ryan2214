@@ -8,7 +8,6 @@ from file_upload.pdf_parse import *
 from text_analysis.senti_analyze import *
 import json
 import logging
-import base64
 import os
 import cv2
 import time
@@ -41,8 +40,6 @@ api = Api(app)
 # set static outdate time
 app.send_file_max_age_default = timedelta(seconds=1)
  
-
-
 ##FILES = {
 ##    "filename": "super news",
 ##    "filetype": "pic" or "txt",
