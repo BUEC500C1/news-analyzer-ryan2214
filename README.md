@@ -3,8 +3,6 @@ news-analyzer-ryan2214 created by GitHub Classroom
 
 File upload, text analysis and Web search.
 
-All the test cases are actually the best use cases.
-
 # Level
 
 / : main page
