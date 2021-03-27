@@ -33,6 +33,12 @@ upload list to json:  store_list_to_json(res,jsname)
 
 run NLP for all text uploaded
 
+# Upload Pictures
+
+MongoDB has an object size limit, and picture could surpass that limit, not implement now.
+
+Maybe divide one picture into several pieces that suit the DB.
+
 # Resources about Flask-RESTful
 
 https://flask-restful.readthedocs.io/en/latest/quickstart.html#full-example
