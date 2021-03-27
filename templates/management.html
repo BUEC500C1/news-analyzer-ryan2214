@@ -40,9 +40,9 @@
 			background-color:rgba(250,250,210,0.9);
   			margin: auto;
   			position: relative;
-  			width: 600px;
   			font-family: Tahoma, Geneva, sans-serif;
   			font-size: 20px;
+        width: 600px;
   			line-height: 24px;
   			font-weight: bold;
   			color: #000000;
@@ -53,6 +53,13 @@
   			border: inset 1px solid #333;
   			text-align: center;
 		}
+    pre{ 
+        white-space:pre-wrap; /* css3.0 */ 
+        white-space:-moz-pre-wrap; /* Firefox */ 
+        white-space:-pre-wrap; /* Opera 4-6 */ 
+        white-space:-o-pre-wrap; /* Opera 7 */ 
+        word-wrap:break-word; /* Internet Explorer 5.5+ */ 
+        } 
 		
 	</style>
 
@@ -64,12 +71,13 @@
   </head>
 
 <form method="POST" action="" enctype="multipart/form-data">
-    <a href="/">Back to Main</a>  
-  =====================================
-    <a href="/management/text">Text</a>
-    =====================================
-    =====================================
-    <a href="/management/images">Pictures</a>
+    <a href="/">Back to Main</a><br>
+  =====================================<br>
+    <a href="/management">Text</a><br>
+    =====================================<br>
+    <pre>{{text_list}}</pre><br>
+    =====================================<br>
+    <a href="/management/images">Pictures</a><br>
     =====================================
 </form>
 

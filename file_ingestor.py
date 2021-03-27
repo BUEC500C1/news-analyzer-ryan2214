@@ -228,12 +228,25 @@ def upload():
  
     return render_template('upload.html')
 
-@app.route('/management', methods=['POST', 'GET'])  # add upload route
+@app.route('/management', methods=['POST', 'GET'])  # add management route
 def show():
-    current_path = os.path.abspath('.')
-    text_list = os.listdir(current_path+'/static/text')
-    pic_list = os.listdir(current_path+'/static/images')
-    return render_template('management.html')
+    # current_path = os.path.abspath('.')
+    # text_list = os.listdir(current_path+'/static/text')
+    # pic_list = os.listdir(current_path+'/static/images')
+    patents = {}
+    for patent_record in myfile.find({"_id":{"$ne":0}}):
+        if patent_record['file_name'] not in patents.keys():
+            patents[patent_record['file_name']] = patent_record
+        else:
+            myfile.delete_one({"file_name":patent_record['file_name']})
+    
+    myquery = {'file_type': "txt" }
+    result = []
+    for x in myfile.find(myquery):
+          result.append(x['file_name'])
+
+    return render_template('management.html', text_list = result)
+    
 
 @app.route('/analyse', methods=['POST', 'GET'])  # add upload route
 def analyse():
