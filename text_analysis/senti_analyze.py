@@ -12,4 +12,3 @@ def text_nlp(text):
     SENTI_RESULT = client.analyze_sentiment(request={'document': document}).document_sentiment.score
 
     return SENTI_RESULT
-    

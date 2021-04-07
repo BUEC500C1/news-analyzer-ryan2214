@@ -239,7 +239,7 @@ def show():
             patents[patent_record['file_name']] = patent_record
         else:
             myfile.delete_one({"file_name":patent_record['file_name']})
-    
+    #myfile.remove({'file_type':'txt'})
     myquery = {'file_type': "txt" }
     result = []
     for x in myfile.find(myquery):
@@ -254,9 +254,11 @@ def analyse():
     text_list = os.listdir(current_path+'/static/text')
     nlp_result = ''
     for file_name in text_list:
-        contents = Path(current_path+'/static/text/'+file_name).read_text()
-        nlp_result += file_name+'\t'
-        nlp_result += "{:.2f}".format(text_nlp(contents))+'\n'
+        if file_name.rsplit('.', 1)[1] != 'json':
+            contents = Path(current_path+'/static/text/'+file_name).read_text()
+            content = ''.join([char for char in contents if char.isalpha()])
+            nlp_result += file_name+'\t'
+            nlp_result += "{:.5f}".format(text_nlp(content))+'\n'
     return render_template('analyse.html',nlp=nlp_result)
 
 if __name__ == '__main__':
